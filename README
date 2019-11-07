@@ -1,0 +1,62 @@
+Due date: Friday 11/8/2019 @ 11:59pm
+
+Assignment:
+~~~~~~~~~~~
+
+- More system calls
+- Donate a test case
+
+Virtual Address Space:
+~~~~~~~~~~~~~~~~~~~~~~
+
+0x00000000 - 0x7FFFFFFF     (shared kernel RWX)
+0x80000000 - 0xEFFFFFFF     (per-thread user RWX)
+0xF0000000 - 0xFFFFFFFF     (shared kernel RWX)
+
+User code should not be able to access anything outside the user range
+
+System calls:
+~~~~~~~~~~~~~
+
+Look in user/sys.h for information about the system calls you need
+to implement
+
+Files:
+~~~~~~
+
+- kernel/          contains the kernel files. Do what you want with it.
+
+- user/            contains the user mode program sources
+
+    2 user programs are given (init.c and shell.c)
+    You can add other user programs by modeling them after init.c
+    make sure you edit the Makefile if you add new user programs
+
+- mkfs/            a utility for building BobFS images. You will
+                   not use it directly.
+
+- t0.src           BobFS image for t0
+
+To compile:
+~~~~~~~~~~~
+
+    make
+
+To build your test image
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+    (cd user ; make)
+
+  This will build a file <your csid>.img. Please commit this file along with
+  your .ok file
+
+To run tests:
+~~~~~~~~~~~~~
+
+    make -s clean test
+
+To run one test:
+~~~~~~~~~~~~~~~~
+
+    make -s t0.test
+
