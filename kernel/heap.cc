@@ -127,11 +127,7 @@ int isTaken(int i) {
     return array[i] < 0;
 }
 
-Atomic<int> nMalloc = 0;
-Atomic<int> nFree = 0;
-    
 void* malloc(size_t bytes) {
-    nMalloc.add(1);
     //Debug::printf("malloc(%d)\n",bytes);
     if (bytes == 0) return (void*) array;
 
@@ -183,7 +179,6 @@ void* malloc(size_t bytes) {
 }
 
 void free(void* p) {
-    nFree.add(1);
     if (p == 0) return;
     if (p == (void*) array) return;
 

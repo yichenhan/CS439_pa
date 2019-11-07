@@ -3,6 +3,7 @@
 #include "machine.h"
 #include "smp.h"
 #include "config.h"
+#include "kernel.h"
 #include "atomic.h"
 
 OutputStream<char> *Debug::sink = 0;
@@ -29,17 +30,21 @@ void Debug::printf(const char* fmt, ...) {
     va_end(ap);
 }
 
-SpinLock silent;
+void Debug::shutdown() {
+    printf("*** 2000000000 shutdown\n");
+    outb(0xf4,0x00);
+    printf("| system shutdown\n");
+    while (true) asm volatile ("hlt");
+}
 
 void Debug::vpanic(const char* fmt, va_list ap) {
-    silent.lock();
     vprintf(fmt,ap);
-    printf("\n| processor %d halting\n*** 2000000000 shutdown\n",SMP::me());
+    printf("| processor %d halting\n",SMP::me());
     outb(0xf4,0x00);
-    while (true) {
-        asm volatile ("hlt");
-    }
+    printf("| system shutdown\n");
+    while (true) asm volatile ("hlt");
 }
+
 
 void Debug::panic(const char* fmt, ...) {
     va_list ap;
@@ -66,6 +71,7 @@ void Debug::debug(const char* fmt, ...) {
 }
 
 void Debug::missing(const char* file, int line) {
-    panic("*** Missing code at %s:%d",file,line);
-    shutdown();
+    panic("*** Missing code at %s:%d\n",file,line);
 }
+
+

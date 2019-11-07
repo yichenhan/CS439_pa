@@ -1,0 +1,9 @@
+x
+| What just happened? Why am I here?
+| totalProcs 4
+| memSize 0x7fd0000 127MB
+| localAPIC fee00000
+| ioAPIC fec00000
+*** Missing code at init.cc:47
+| processor 240 halting
+*** 2000000000 shutdown

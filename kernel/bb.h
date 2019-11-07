@@ -1,39 +1,40 @@
-#ifndef _BB_H_
-#define _BB_H_
+#ifndef _bb_h_
+#define _bb_h_
 
-#include "stdint.h"
-#include "mutex.h"
 #include "semaphore.h"
 
-template <typename T, uint32_t N>
-class BB {
+template <int N, typename T>
+class BoundedBuffer {
+    int head;
+    int n;
+    Semaphore nEmpty;
+    Semaphore nFull;
+    Semaphore lock;
     T data[N];
-    uint32_t head = 0;
-    uint32_t tail = 0;
-    Mutex mutex;
-    Semaphore nEmpty { N };
-    Semaphore nFull { 0 };
 public:
-    T get(void) {
-        nFull.down();
-        mutex.lock();
-        T v = data[head];
-        head = (head + 1) % N;
-        mutex.unlock();
-        nEmpty.up();
-        return v;
-    }
+    BoundedBuffer() : head(0), n(0), nEmpty(N), nFull(0), lock(1) {}
 
-    void put(T v) {
+    void put(T t) {
         nEmpty.down();
-        mutex.lock();
-        data[tail] = v;
-        tail = (tail + 1) % N;
-        mutex.unlock();
+        lock.down();
+        data[(head + n) % N] = t;
+        n++;
+        lock.up();
         nFull.up();
     }
-};
-        
 
+    T get() {
+        T out;
+        nFull.down();
+        lock.down();
+        out = data[head];
+        head = (head + 1) % N;
+        n--;
+        lock.up();
+        nEmpty.up();
+        return out;
+    }
+        
+};
 
 #endif
